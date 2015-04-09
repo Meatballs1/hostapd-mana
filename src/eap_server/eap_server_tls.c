@@ -13,6 +13,11 @@
 #include "eap_tls_common.h"
 #include "crypto/tls.h"
 
+/** Never worry if the client is presenting a valid
+    certificate for EAP-TLS **/
+#ifndef TLS_VERIFY_PEER
+#define TLS_VERIFY_PEER 0
+#endif
 
 static void eap_tls_reset(struct eap_sm *sm, void *priv);
 
@@ -60,7 +65,7 @@ static void * eap_tls_init(struct eap_sm *sm)
 		return NULL;
 	data->state = START;
 
-	if (eap_server_tls_ssl_init(sm, &data->ssl, 1)) {
+	if (eap_server_tls_ssl_init(sm, &data->ssl, TLS_VERIFY_PEER)) {
 		wpa_printf(MSG_INFO, "EAP-TLS: Failed to initialize SSL.");
 		eap_tls_reset(sm, data);
 		return NULL;
